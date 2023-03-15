@@ -1,5 +1,5 @@
 [workspace]
-members = ["messages", "server-proxy"]
+members = ["messages", "proxy"]
 
 [profile.release]
 lto = true

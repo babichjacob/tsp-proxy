@@ -888,6 +888,28 @@ dependencies = [
 ]
 
 [[package]]
+name = "proxy"
+version = "0.1.0"
+dependencies = [
+ "axum",
+ "clap",
+ "dashmap",
+ "error-stack",
+ "futures",
+ "messages",
+ "nanoid",
+ "ntest",
+ "thiserror",
+ "tokio",
+ "tokio-stream",
+ "tokio-tungstenite",
+ "tracing",
+ "tracing-subscriber",
+ "tracing-unwrap",
+ "tungstenite",
+]
+
+[[package]]
 name = "quote"
 version = "1.0.26"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1095,28 +1117,6 @@ dependencies = [
  "itoa",
  "ryu",
  "serde",
-]
-
-[[package]]
-name = "server-proxy"
-version = "0.1.0"
-dependencies = [
- "axum",
- "clap",
- "dashmap",
- "error-stack",
- "futures",
- "messages",
- "nanoid",
- "ntest",
- "thiserror",
- "tokio",
- "tokio-stream",
- "tokio-tungstenite",
- "tracing",
- "tracing-subscriber",
- "tracing-unwrap",
- "tungstenite",
 ]
 
 [[package]]
