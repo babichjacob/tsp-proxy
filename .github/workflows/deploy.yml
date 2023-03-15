@@ -1,0 +1,48 @@
+name: Build and deploy
+
+on:
+  push:
+    tags:
+      - "*"
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v3
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ vars.RUST_TARGET }}
+      - uses: Swatinem/rust-cache@v2
+
+      - uses: shimataro/ssh-key-action@v2
+        with:
+          key: ${{ secrets.SSH_KEY }}
+          known_hosts: ${{ secrets.KNOWN_HOSTS }}
+
+      - run: cargo build --release --target ${{ vars.RUST_TARGET }}
+      - run: rsync --verbose ./target/${{ vars.RUST_TARGET }}/release/${{ vars.BINARY_NAME }} ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:${{ secrets.DEPLOYMENT_DIRECTORY }}/
+
+      - run: "envsubst < systemd-deployment.service > systemd-deployment.service-replaced && mv systemd-deployment.service-replaced systemd-deployment.service"
+        env:
+          BINARY_NAME: ${{ vars.BINARY_NAME }}
+          DEPLOYMENT_DIRECTORY: ${{ secrets.DEPLOYMENT_DIRECTORY }}
+          PORT: ${{ vars.PORT }}
+      - run: rsync --verbose ./systemd-deployment.service ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:${{ secrets.DEPLOYMENT_DIRECTORY }}/
+
+      - run: "envsubst < install-service.bash > install-service.bash-replaced && mv install-service.bash-replaced install-service.bash"
+        env:
+          BINARY_NAME: ${{ vars.BINARY_NAME }}
+          DEPLOYMENT_DIRECTORY: ${{ secrets.DEPLOYMENT_DIRECTORY }}
+      - run: cat ./install-service.bash | ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}
+
+      - run: cat ./install-caddy.bash | ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}
+
+      - run: "envsubst < Caddyfile > Caddyfile-replaced && mv Caddyfile-replaced Caddyfile"
+        env:
+          PORT: ${{ vars.PORT }}
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+      - run: rsync --verbose ./Caddyfile ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:${{ secrets.DEPLOYMENT_DIRECTORY }}/
+
+      - run: cat ./setup-caddy.bash | ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}

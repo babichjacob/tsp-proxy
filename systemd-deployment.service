@@ -1,0 +1,13 @@
+[Unit]
+Description=Team Second Place - Smart Home System - Proxy
+
+[Service]
+Type=simple
+Restart=always
+RestartSec=5
+ExecStart=$DEPLOYMENT_DIRECTORY/$BINARY_NAME
+WorkingDirectory=$DEPLOYMENT_DIRECTORY
+Environment=PORT=$PORT
+
+[Install]
+WantedBy=multi-user.target
