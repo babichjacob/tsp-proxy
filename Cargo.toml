@@ -1,0 +1,8 @@
+[workspace]
+members = ["messages", "server-proxy"]
+
+[profile.release]
+lto = true
+
+[profile.release.package.messages]
+opt-level = "s"
