@@ -1,3 +1,6 @@
 [submodule "proxy"]
 	path = proxy
 	url = https://github.com/team-second-place/proxy
+[submodule "messages"]
+	path = messages
+	url = https://github.com/team-second-place/messages
