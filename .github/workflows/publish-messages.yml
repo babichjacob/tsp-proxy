@@ -1,0 +1,38 @@
+name: Publish to NPM every tag (i.e. new version)
+
+on:
+  push:
+    tags:
+      - "*"
+
+jobs:
+  publish:
+    strategy:
+      matrix:
+        node-version: [18]
+        os: [ubuntu-latest]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: recursive
+      
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          # TODO: extract to repository variable?
+          targets: "wasm32-unknown-unknown"
+      - uses: Swatinem/rust-cache@v2
+      - uses: jetli/wasm-pack-action@v0.4.0
+
+      - uses: actions/setup-node@v2
+        with:
+          node-version: ${{ matrix.node-version }}
+          registry-url: https://registry.npmjs.org/
+      - uses: pnpm/action-setup@v2.0.1
+        with:
+          version: 7
+      - run: wasm-pack build --target bundler --scope babichjacob
+      - run: wasm-pack publish --target bundler
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

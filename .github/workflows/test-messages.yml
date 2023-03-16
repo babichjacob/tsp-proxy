@@ -1,0 +1,26 @@
+name: "Test the messages crate"
+
+on: [push, pull_request]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: recursive
+      
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          # TODO: extract to repository variable?
+          targets: "wasm32-unknown-unknown"
+      - uses: Swatinem/rust-cache@v2
+      - uses: jetli/wasm-pack-action@v0.4.0
+          
+      - run: cargo test
+        working-directory: "messages"
+      - run: wasm-pack test --headless --chrome
+        working-directory: "messages"
+      - run: wasm-pack test --headless --firefox
+        working-directory: "messages"
