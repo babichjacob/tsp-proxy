@@ -21,6 +21,8 @@ jobs:
         uses: dtolnay/rust-toolchain@stable
         with:
           components: rustfmt
+          targets: ${{ vars.RUST_TARGET }}
+      - uses: Swatinem/rust-cache@v2
       - name: cargo fmt --check
         run: cargo fmt --check
   clippy:
@@ -42,6 +44,8 @@ jobs:
         with:
           toolchain: ${{ matrix.toolchain }}
           components: clippy
+          targets: ${{ vars.RUST_TARGET }}
+      - uses: Swatinem/rust-cache@v2
       - name: cargo clippy
         uses: actions-rs/clippy-check@v1
         with:
@@ -55,6 +59,9 @@ jobs:
           submodules: true
       - name: Install nightly
         uses: dtolnay/rust-toolchain@nightly
+        with:
+          targets: ${{ vars.RUST_TARGET }}
+      - uses: Swatinem/rust-cache@v2
       - name: cargo doc
         run: cargo doc --no-deps --all-features
         env:
@@ -68,6 +75,9 @@ jobs:
           submodules: true
       - name: Install stable
         uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ vars.RUST_TARGET }}
+      - uses: Swatinem/rust-cache@v2
       - name: cargo install cargo-hack
         uses: taiki-e/install-action@cargo-hack
       # intentionally no target specifier; see https://github.com/jonhoo/rust-ci-conf/pull/4
@@ -88,6 +98,8 @@ jobs:
       - name: Install ${{ matrix.msrv }}
         uses: dtolnay/rust-toolchain@master
         with:
+          targets: ${{ vars.RUST_TARGET }}
           toolchain: ${{ matrix.msrv }}
+      - uses: Swatinem/rust-cache@v2
       - name: cargo +${{ matrix.msrv }} check
         run: cargo check
