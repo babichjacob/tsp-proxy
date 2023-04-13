@@ -29,6 +29,9 @@ jobs:
       - name: cargo generate-lockfile
         if: hashFiles('Cargo.lock') == ''
         run: cargo generate-lockfile
+      - uses: taiki-e/install-action@v2
+        with:
+          tool: nextest
       # https://twitter.com/jonhoo/status/1571290371124260865
       - name: cargo nextest run --locked
         run: cargo nextest run --locked --all-features --all-targets
@@ -71,6 +74,9 @@ jobs:
       - name: cargo generate-lockfile
         if: hashFiles('Cargo.lock') == ''
         run: cargo generate-lockfile
+      - uses: taiki-e/install-action@v2
+        with:
+          tool: nextest
       - name: cargo nextest run
         run: cargo nextest run --locked --all-features --all-targets
   coverage:
