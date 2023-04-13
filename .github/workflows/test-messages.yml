@@ -16,9 +16,12 @@ jobs:
           # TODO: extract to repository variable?
           targets: "wasm32-unknown-unknown"
       - uses: Swatinem/rust-cache@v2
+      - uses: taiki-e/install-action@v2
+        with:
+          tool: nextest
       - uses: jetli/wasm-pack-action@v0.4.0
           
-      - run: cargo test
+      - run: cargo nextest run
         working-directory: "messages"
       - run: wasm-pack test --headless --chrome
         working-directory: "messages"
